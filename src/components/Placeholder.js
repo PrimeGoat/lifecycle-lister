@@ -1,54 +1,63 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 //import '../App.css';
 import Album from './Album';
 const axios = require('axios');
 
 class App extends Component {
-	constructor() {
-		super();
+  constructor() {
+    super();
 
-		this.state = {
-			galleries: []
-		}
-		console.log("App constructed.");
-	}
+    this.state = {
+      galleries: []
+    };
+    console.log('App constructed.');
+  }
 
-	componentDidMount() { // best time to make an API call
-		console.log("componentDidMount ran");
+  componentDidMount() {
+    // best time to make an API call
+    console.log('componentDidMount ran');
 
-		for(let i = 1; i <= 20; i++) {
-			lookupGallery(this, i);
-		}
-	}
+    for (let i = 1; i <= 20; i++) {
+      lookupGallery(this, i);
+    }
+  }
 
-	render() {
-		return this.state.galleries.sort((a, b) => {
-			if(a[0].albumId < b[0].albumId) return -1;
-			else if(a[0].albumId > b[0].albumId) return 1;
-			else return 0;
-		}).map(item => {
-			console.log("Sending album " + item[0].albumId + " out for rendering.");
-			return (
-				<div className="App">
-					<Album id={item[0].albumId} data={item} />
-				</div>
-			);
-		});
-	}
+  render() {
+    console.log('Galleries', this.state.galleries);
+    return this.state.galleries
+      .sort((a, b) => {
+        if (a[0].albumId < b[0].albumId) return -1;
+        else if (a[0].albumId > b[0].albumId) return 1;
+        else return 0;
+      })
+      .map((item, idx) => {
+        // console.log('Sending album ' + item[0].albumId + ' out for rendering.');
+        return (
+          <div className='App'>
+            <Album id={item[idx].albumId} data={item} />
+          </div>
+        );
+      });
+  }
 }
 
-const lookupGallery = async function(them, i) {
-	const response = await axios.get(`https://jsonplaceholder.typicode.com/photos?albumId=${i}&_limit=20`);
+const lookupGallery = async function (them, i) {
+  const response = await axios.get(
+    `https://jsonplaceholder.typicode.com/photos?albumId=${i}&_limit=20`
+  );
+  console.log('response', response);
 
-	them.setState({
-		galleries: [...them.state.galleries, response.data]
-	}, () => {
-		console.log("Just updated galleries:", them.state.galleries);
-	});
-}
+  them.setState(
+    {
+      galleries: [...them.state.galleries, response.data]
+    },
+    () => {
+      //   console.log('Just updated galleries:', them.state.galleries);
+    }
+  );
+};
 
 export default App;
-
 
 /*
 
